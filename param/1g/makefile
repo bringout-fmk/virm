@@ -3,7 +3,7 @@ MODUL=vi_1par
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\virm\\param\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\virm\\param\\1g\\
 
 PRGS=params.prg mnu_par.prg
 

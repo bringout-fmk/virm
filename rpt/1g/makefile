@@ -3,7 +3,7 @@ MODUL=vi_1rpt
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\virm\\rpt\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\virm\\rpt\\1g\\
 
 PRGS=rpt_vir.prg
 

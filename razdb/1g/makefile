@@ -3,7 +3,7 @@ MODUL=vi_1raz
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\virm\\razdb\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\virm\\razdb\\1g\\
 
 PRGS=mnu_raz.prg kalkvir.prg ld_vir.prg fin_vir.prg
 

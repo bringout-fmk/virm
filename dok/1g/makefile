@@ -3,7 +3,7 @@ MODUL=vi_1dok
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\virm\\dok\\1g\\
+SRCDOSROOT=c:\\dev\\fmk\\virm\\dok\\1g\\
 
 PRGS=unos.prg unosupl.prg
 

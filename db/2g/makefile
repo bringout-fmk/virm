@@ -3,7 +3,7 @@ MODUL=vi_2db
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\virm\\db\\2g\\
+SRCDOSROOT=c:\\dev\\fmk\\virm\\db\\2g\\
 
 PRGS=db.prg
 

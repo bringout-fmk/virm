@@ -3,7 +3,7 @@ MODUL=vi_2ma
 
 include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\dev\\fmk\\virm\\main\\2g\\
+SRCDOSROOT=c:\\dev\\fmk\\virm\\main\\2g\\
 
 PRGS=app.prg
 
