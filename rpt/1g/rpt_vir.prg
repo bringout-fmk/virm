@@ -1,4 +1,4 @@
-#include "\cl\sigma\fmk\virm\virm.ch"
+#include "\dev\fmk\virm\virm.ch"
 
 function StDok()
 *{

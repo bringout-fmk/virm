@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=vi_1raz
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\virm\\razdb\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\virm\\razdb\\1g\\
 
 PRGS=mnu_raz.prg kalkvir.prg ld_vir.prg fin_vir.prg
 

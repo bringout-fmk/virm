@@ -1,9 +1,9 @@
 VERZIJA=CDX
 MODUL=vi_1rpt
 
-include /cl/sigma/Makefile_clipper
+include /sclib/Makefile_clipper
 
-SRCDOSROOT=h:\\cl\\sigma\\fmk\\virm\\rpt\\1g\\
+SRCDOSROOT=h:\\dev\\fmk\\virm\\rpt\\1g\\
 
 PRGS=rpt_vir.prg
 
