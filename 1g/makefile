@@ -1,6 +1,5 @@
 VERZIJA=CDX
 MODUL=VIRM
-MODVER=1.w.0.1.5
 
 PRGS=/dev/fmk/virm/main/1g/e.prg
 CS=
@@ -38,14 +37,13 @@ zip:
 	/sclib/zip.sh h:\\cs\\fmk\\binary\\$(MODUL).zip ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\svi\\\*.chs \\dev\\fmk\\virm\\rpt\\1g\\rtm\\*.rtm  $(EXEDOSDEST)\\$(MODUL).EXE 
 
 commit:
-	/sclib/commit.sh $(MODVER) h:\\cs\\fmk\\binary\\$(MODUL).zip
+	/sclib/commit.sh $(MODUL) h:\\cs\\fmk\\binary\\$(MODUL).zip
+	/sclib/commit.sh $(MODUL) h:\\cs\\fmk\\binary\\sfx\\$(MODUL).exe
 
 clean:
 	rm -f *.obj *.OBJ
 	rm -f $(OBJS) I$(MODULH).OBJ *.bak *.BAK
 
-
-
-
-sfx:
-	/cygdrive/p/bat/SFXMA.BAT virm
+7exe:
+	/sclib/7exe.sh h:\\cs\\fmk\\binary\\sfx\\$(MODUL).exe ..\\chs\\\*.chs \\dev\\fmk\\AF\\cl-AF\\svi\\\*.chs \\dev\\fmk\\virm\\rpt\\1g\\rtm\\*.rtm  $(EXEDOSDEST)\\$(MODUL).EXE 
+	
