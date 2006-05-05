@@ -2,8 +2,8 @@
 	#include "sc.ch"
 #endif
 
-#define D_VIRM_VERZIJA "1.w.0.1.5"
-#define D_VIRM_PERIOD '06.96-09.08.04'
+#define D_VIRM_VERZIJA "02.00"
+#define D_VIRM_PERIOD '06.96-05.05.06'
 
 #ifndef FMK_DEFINED
 	#include "\dev\fmk\AF\cl-AF\fmk.ch"
