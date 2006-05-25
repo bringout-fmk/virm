@@ -84,6 +84,8 @@ private lPodBugom
 
 public gSQL:="N"
 
+say_fmk_ver()
+
 SETKEY(K_SH_F1,{|| Calc()})
 Izbor:=1
 
