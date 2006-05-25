@@ -1,7 +1,7 @@
 liball: 
-	make -C dok/1g
 	make -C main/1g
 	make -C main/2g
+	make -C dok/1g
 	make -C db/1g
 	make -C db/2g
 	make -C rpt/1g
@@ -11,9 +11,9 @@ liball:
 	make -C 1g exe
 	
 cleanall:	
-	make -C dok/1g clean
 	make -C main/1g clean
 	make -C main/2g clean
+	make -C dok/1g clean
 	make -C db/1g clean
 	make -C db/2g clean
 	make -C rpt/1g clean
