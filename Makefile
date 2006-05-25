@@ -23,3 +23,4 @@ cleanall:
 	make -C 1g clean
 
 virm:  cleanall liball
+	
