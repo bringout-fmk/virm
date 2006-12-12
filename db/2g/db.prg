@@ -428,7 +428,7 @@ if (nArea==-1 .or. nArea==(F_PARTN))
 		DBCREATE2(SIFPATH+'PARTN.DBF',aDbf)
 	endif
 	CREATE_INDEX("ID","id",SIFPATH+"PARTN") // firme
-	CREATE_INDEX("NAZ","naz",SIFPATH+"PARTN")
+	CREATE_INDEX("NAZ","LEFT(naz,20)",SIFPATH+"PARTN")
 endif
  
 if (nArea==-1 .or. nArea==(F_VALUTE))

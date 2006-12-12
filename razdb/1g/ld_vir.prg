@@ -71,12 +71,21 @@ endif
 
 cDOBrRad:=""  // opis, broj radnika
 
-SELECT LDVIRM; GO TOP
+SELECT LDVIRM
+GO TOP
 
 nRbr:=0
+
 DO WHILE !EOF()
 
-     private cFormula:=formula
+     private cFormula := formula
+     
+     // nema formule - preskoci...
+     if EMPTY(cFormula)
+     	skip
+	loop
+     endif
+     
      cSvrha_pl:=id
 
      select VRPRIM; hseek ldvirm->id
@@ -88,7 +97,7 @@ DO WHILE !EOF()
 
      select PRIPR
 
-     IF cBezNula=="N" .or. nFormula>0
+     IF cBezNula=="N" .or. nFormula > 0
 
        APPEND BLANK
        replace rbr with ++nrbr, ;

@@ -7,7 +7,7 @@ PRIVATE ImeKol,Kol
 ImeKol:={}
 Kol:={}
 AADD(ImeKol, { PADC("ID",6),      {|| id },     "id"   , {|| .t.}, {|| vpsifra(wid)}    } )
-AADD(ImeKol, { PADC("Naziv",25),  {|| naz},     "naz"      } )
+AADD(ImeKol, { PADC("Naziv",25),  {|| PADR(naz, 20)},     "naz"      } )
 AADD(ImeKol, { PADC("PTT",5),     {|| PTT},     "ptt"      } )
 AADD(ImeKol, { PADC("Mjesto",16), {|| MJESTO},  "mjesto"   } )
 AADD(ImeKol, { PADC("Adresa",24), {|| ADRESA},  "adresa"   } )
