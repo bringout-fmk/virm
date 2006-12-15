@@ -370,78 +370,117 @@ FillJPrih()  // popuni polja javnih prihoda
 
 closeret
 
-**************************************************************
-function RLD(cid,nIz12,qqPartn)
-*
-**************************************************************
-local npom1:=0, npom2:=0
-if niz12=NIL
-  niz12:=1
+
+// --------------------------------------------
+// RLD
+// --------------------------------------------
+function RLD(cId, nIz12, qqPartn)
+local nPom1:=0
+local nPom2:=0
+
+if nIz12 == NIL
+	nIz12:=1
 endif
+
 // prolazim kroz rekld i trazim npr DOPR1XSA01
-rekapld(cid,_godina,_mjesec,@npom1,@npom2,,@cDOBrRad,qqPartn)
-if niz12==1
- return npom1
+rekapld(cId, _godina, _mjesec, @nPom1, @nPom2, , @cDOBrRad, qqPartn)
+
+if nIz12 == 1
+	return nPom1
 else
- return npom2
+	return nPom2
 endif
+
 return 0
 
-****************************************************************
-function Rekapld(cId,ngodina,nmjesec,nizn1,nizn2,cidpartner,copis,qqPartn)
-*
-****************************************************************
+
+
+// --------------------------------------
+// Rekapitulacija LD-a
+// --------------------------------------
+function Rekapld( cId, ;
+		nGodina, ;
+		nMjesec, ;
+		nIzn1, ;
+		nIzn2, ;
+		cIdPartner, ;
+		cOpis, ;
+		qqPartn )
+
+local lGroup := .f.
+
 PushWA()
-if cidpartner=NIL
-  cidpartner:=""
+
+if cIdPartner == NIL
+	cIdPartner := ""
 endif
-if copis=NIL
-  copis:=""
+if cOpis == NIL
+  	cOpis := ""
+endif
+
+// ima li marker "*"
+if "**" $ cId
+	lGroup := .t.
+	// izbaci zvjezdice..
+	cId := STRTRAN(cId, "**", "")
 endif
 
 select rekld
-if qqPartn==NIL
- hseek str(ngodina,4)+str(nmjesec,2)+cid
- nizn1:=iznos1
- nizn2:=iznos2
- cidpartner:=idpartner
- copis:=opis
- //IF lOpresa .and. ( LEFT(cId,3)=="POR" .or. LEFT(cId,4)=="DOPR" )
- //  cPozBr := ALLTRIM( STR(iznos2,20,2) )
- //ELSE
- //  cPozBr := ""
- //ENDIF
+go top
+
+if qqPartn == NIL
+	
+	hseek STR(nGodina, 4) + STR(nMjesec, 2) + cId
+ 	
+	if lGroup == .t.
+	
+		do while !EOF() .and. STR(nGodina, 4) == godina ;
+				.and. STR(nMjesec, 2) == mjesec ;
+				.and. id = cId
+		
+				nIzn1 += iznos1
+ 				nIzn2 += iznos2
+		
+				skip
+		enddo
+		
+	else
+		nIzn1 := iznos1
+		nIzn2 := iznos2
+	endif
+	
+	cIdPartner:=idpartner
+ 	cOpis:=opis
+
 else
- nizn1 := nizn2 := nRadnika := 0
- aUslP := Parsiraj(qqPartn,"IDPARTNER")
- seek str(ngodina,4)+str(nmjesec,2)+cid
- do while !eof() .and.;
-          godina+mjesec+id = str(ngodina,4)+str(nmjesec,2)+cid
-   if &aUslP
-     nizn1 += iznos1
-     nizn2 += iznos2
-     IF LEFT(opis,1)=="("
-       cOpis    := opis
-       cOpis    := STRTRAN(cOpis,"(","")
-       cOpis    := ALLTRIM(STRTRAN(cOpis,")",""))
-       nRadnika += VAL(cOpis)
-     ENDIF
-   ENDIF
-   skip 1
- enddo
- cIdPartner:=""
- IF nRadnika>0
-   cOpis:="("+ALLTRIM(STR(nRadnika))+")"
- ELSE
-   cOpis:=""
- ENDIF
- // u poziv na broj za poreze i dopr stavljena netor,bruto osnovica
- //IF lOpresa .and. ( LEFT(cId,3)=="POR" .or. LEFT(cId,4)=="DOPR" )
- //  cPozBr := ALLTRIM( STR(nizn2,20,2) )
- //ELSE
- //  cPozBr := ""
- //ENDIF
+	nIzn1 := nIzn2 := nRadnika := 0
+ 	aUslP := Parsiraj(qqPartn,"IDPARTNER")
+ 	seek STR(nGodina, 4) + STR(nMjesec, 2) + cId
+ 	do while !eof() .and.;
+          	godina+mjesec+id = STR(nGodina, 4) + STR(nMjesec, 2) + cId
+   		if &aUslP
+     			nIzn1 += iznos1
+     			nIzn2 += iznos2
+     			if LEFT(opis,1)=="("
+       				cOpis    := opis
+       				cOpis    := STRTRAN(cOpis,"(","")
+       				cOpis    := ALLTRIM(STRTRAN(cOpis,")",""))
+       				nRadnika += VAL(cOpis)
+     			endif
+   		endif
+   		skip 1
+ 	enddo
+ 	
+	cIdPartner:=""
+ 	IF nRadnika>0
+   		cOpis:="("+ALLTRIM(STR(nRadnika))+")"
+ 	ELSE
+   		cOpis:=""
+ 	ENDIF
 endif
 
 PopWA()
 return
+
+
+
