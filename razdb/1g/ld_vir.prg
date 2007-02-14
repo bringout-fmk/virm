@@ -92,6 +92,8 @@ DO WHILE !EOF()
      select partn;hseek  gFirma
 
      select PRIPR
+	
+     altd()
 
      nFormula := &cFormula  // npr. RLD("DOPR1XZE01")
 
@@ -113,9 +115,6 @@ DO WHILE !EOF()
                Ko_ZR with cKo_ZR ,;
                mjesto with gMjesto ,;
                kome_txt with VRPRIM->naz
-
-       //  29.01.2001 promjene ............
-       //  nacpl with VRPRIM->nacin_pl, ;
 
 
        cPomOpis := trim(VRPRIM->pom_txt)+IF(!EMPTY(cDOpis)," "+cDOpis,"")+;
@@ -147,14 +146,6 @@ DO WHILE !EOF()
                POD with dPOD, PDO with dPDO,;
                budzorg with cBudzOrg,;
                BPO with cBPO
-
-             //2001 -ukunuto
-             //  sifra with VRPRIM->sifra
-             //  dat_dpo with dDatVir,;
-
-       //if nacpl=="2" // devize
-       //       replace ko_zr with partn->dziror
-       //endif
 
      ENDIF
 
@@ -203,7 +194,6 @@ do while !eof() .and. id="KRED"
      cKome_sj:=mjesto
      cNacPl:="1"
 
-     //cKome_zr:=ziror
      cKome_ZR:=space(16)
      OdBanku(cU_korist,@cKome_ZR, .f.)
 
@@ -214,12 +204,9 @@ do while !eof() .and. id="KRED"
      select partn;hseek  gFirma
 
      nRekLDI1:=0
-     //if lOpresa
-       // sumiraj istog kreditora (za razliŸite part.kredita radnika)
        nKrOpresa:=0
        SELECT REKLD
        cSKOpresa := idpartner // SK=sifra kreditora
-       // krediti .............
        DO WHILE !EOF() .and. id="KRED" .and. IDPARTNER=cSKOpresa
          ++nKrOpresa
          cOpresa2:=rekld->opis2
@@ -227,9 +214,6 @@ do while !eof() .and. id="KRED"
          SKIP 1
        ENDDO
        SKIP -1
-     //else
-     //  nRekLDI1 := rekld->iznos1
-     //endif
 
      select PRIPR
      IF cBezNula=="N" .or. nRekLDI1>0
@@ -247,15 +231,6 @@ do while !eof() .and. id="KRED"
                dat_upl with dDatVir,;
                svrha_doz with trim(VRPRIM->pom_txt)+" "+cDOpis,;
                U_KORIST WITH cidkred  // SIFRA KREDITORA
-
-               //dorade 2001
-               //orgjed with gorgjed,;
-               //sifra with VRPRIM->sifra,;
-               //Ko_Txt with partn->naz,;
-               //Ko_ZR with partn->ziror ,;
-               //Ko_SJ  with partn->Mjesto,;
-               //dat_dpo with dDatVir,;
-               //nacpl with VRPRIM->nacin_pl, ;
 
         // popuniti podatke o partiji kredita
         if lOpresa
@@ -365,6 +340,110 @@ do while !eof() .and. id="IS_"
   SELECT REKLD
   skip
 enddo
+
+
+// odraditi autorske honorare
+// "NETO"
+select REKLD
+seek str(_godina,4) + str(_mjesec,2) + "NETO"
+
+if FOUND() .and. rekld->(FIELDPOS("izdanje")) <> 0
+
+   do while !eof() .and. id = "NETO"
+
+	cAutor := idpartner
+	cAutNaz := ALLTRIM(opis2)
+	
+	// aKreditor := { kreditor_id, broj_racuna, partija }
+	aKreditor := TokToNiz( opis, "#" )
+	
+	cKredId := aKreditor[1]
+	cRadnBrRn := PADR(aKreditor[2], 16)
+	
+	if LEN(aKreditor) > 2
+		cRadnPart := " partija: " + aKreditor[3]
+	else
+		cRadnPart := ""
+	endif
+
+	select partn
+	hseek PADR(cAutor, LEN(partn->id))
+
+	if !FOUND()
+		append blank
+		replace id with cAutor
+		replace naz with cAutNaz
+		replace ziror with cRadnBrRn
+	endif
+
+	select vrprim
+	hseek PADR("AH", LEN(id) ) 
+     	
+	if !FOUND()
+       		APPEND BLANK
+       		replace id with "AH",;
+               		naz with "Autorski honorar",;
+               		pom_txt with "Autorski honorar",;
+               		nacin_pl WITH "1",;
+               		dobav WITH "D"
+     	endif
+
+	cSvrha_pl := id
+	
+     	select partn
+     	seek cAutor
+
+	cU_korist := cAutor
+     	cKome_txt := cAutNaz
+     	cKome_sj := mjesto
+     	cNacPl := "1"
+	cKome_ZR := cRadnBrRn
+
+     	select pripr
+	go top   
+     	
+	cKo_Txt := ko_txt
+     	cKo_ZR := ko_zr
+
+     	select rekld
+	
+     	nAIzn := 0
+	
+	do while !EOF() .and. id = "NETO" .and. idpartner = cAutor
+	
+		nAIzn += rekld->iznos1
+		skip 1
+		
+     	enddo
+	
+     	select pripr
+     	
+	IF cBezNula == "N" .or. nAIzn > 0
+	
+       		append blank
+       		replace rbr with ++nRbr, ;
+               		mjesto with gMjesto,;
+               		svrha_pl with "AH",;
+               		iznos with nAIzn,;
+               		na_teret with gFirma,;
+               		kome_txt with cKome_txt ,;
+               		ko_txt   with cKo_txt,;
+               		ko_zr    with cKo_zr,;
+               		kome_sj  with cKome_sj,;
+               		kome_zr with cKome_zr,;
+               		dat_upl with dDatVir,;
+               		svrha_doz with TRIM(VRPRIM->pom_txt) + " " + cDOpis,;
+               		u_korist WITH cAutor
+
+        	replace svrha_doz with trim(svrha_doz) + ;
+			", " + cRadnPart 
+			
+     	endif
+  	select rekld
+  	skip
+	
+   enddo
+endif
 
 FillJPrih()  // popuni polja javnih prihoda
 
