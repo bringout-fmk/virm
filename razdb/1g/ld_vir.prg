@@ -439,8 +439,9 @@ if FOUND() .and. rekld->(FIELDPOS("izdanje")) <> 0
 			", " + cRadnPart 
 			
      	endif
-  	select rekld
-  	skip
+  	
+	select rekld
+  	//skip
 	
    enddo
 endif
