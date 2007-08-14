@@ -748,14 +748,12 @@ return ASifV
 
 
 
-
 **************************************
 * po izlasku iz ove funkcije kursor
 * jprih.dbf-a treba biti pozicioniran
 * na trazeni javni prihod
 **************************************
 function JPrih(cIdJPrih, cIdOps, cIdKan, cIdEnt)
-*{
 local fOk
 if cIdOps==NIL
   cIdOps:=""
@@ -824,51 +822,65 @@ return aRez
  // pretpostavke: kursor VRPRIM-> podesen na tekuce primanje
 */
 function SetJPVar()
-*{
- LOCAL cPom2:=""
-  _IdJPrih:=TOKEN(vrprim->racun,"-",1)
-  cPom:=    TOKEN(vrprim->racun,"-",2) // <- moze biti opcina, kanton ili entitet ili nista
-  cPom2:=   TOKEN(vrprim->racun,"-",3) // <- moze se iskoristiti za opcinu
-  cPom:=trim(cPom); cPom2:=TRIM(cPom2) //    ako je cPom kanton ili entitet a
-  if len(cPom)==3                      //    opcina se popunjava na osnovu
-    // nivo opcina                     //    prebivaliçta radnika
-    _IdOps:=cPom
-    aJPrih := JPrih(_IdJPrih,_IdOps,"","")
-   _kome_zr := aJPrih[1]
-   //_kome_txt := aJPrih[2]
-   _BudzORg:=  aJPrih[3]
-  elseif len(cPom)==2
-    // nivo kantona
-    // _IdOps:=space(3)
-    _IdOps:=IF(LEN(cPom2)==3,cPom2,OpcRada())
-    aJPrih := JPrih(_IdJPrih,"",cPom,"")
-   _kome_zr := aJPrih[1]
-   //_kome_txt := aJPrih[2]
-   _BudzORg:=  aJPrih[3]
-  elseif len(cPom)==1
-    // nivo entiteta
-    // _IdOps:=space(3)
-    _IdOps:=IF(LEN(cPom2)==3,cPom2,OpcRada())
-    aJPrih := JPrih(_IdJPrih,"","",cPom)
-   _kome_zr := aJPrih[1]
-   //_kome_txt := aJPrih[2]
-   _BudzORg:=  aJPrih[3]
-  elseif len(cPom)==0
-    // jedinstveni uplatni racun
-    _IdOps:=space(3)
-    _IdJprih:=padr(_idjprih,6) // duzina sifre javnog prihoda
-    aJPrih := JPrih(_IdJPrih,"","",cPom)
-   _kome_zr := aJPrih[1]
-   //_kome_txt := aJPrih[2]
-   _BudzORg:=  aJPrih[3]
-  endif
+local cPom2 := ""
+
+_IdJPrih := TOKEN(vrprim->racun, "-", 1)
+
+cPom := TOKEN(vrprim->racun, "-", 2) 
+// <- moze biti opcina, kanton ili entitet ili nista
+
+cPom2 := TOKEN(vrprim->racun, "-", 3) 
+// <- moze se iskoristiti za opcinu
+
+cPom := TRIM(cPom)
+cPom2 := TRIM(cPom2) 
+
+//    ako je cPom kanton ili entitet a
+
+if LEN(cPom) == 3 
+    
+	_IdOps := cPom
+    	aJPrih := JPrih(_IdJPrih, _IdOps, "", "")
+   	_kome_zr := aJPrih[1]
+   	//_kome_txt := aJPrih[2]
+   	_BudzORg:=  aJPrih[3]
+
+elseif LEN(cPom) == 2
+
+	// nivo kantona
+    	// _IdOps:=space(3)
+    	_IdOps := IF( LEN(cPom2) == 3, cPom2, OpcRada() )
+    	aJPrih := JPrih( _IdJPrih, "", cPom, "")
+   	_kome_zr := aJPrih[1]
+   	//_kome_txt := aJPrih[2]
+   	_BudzORg := aJPrih[3]
+
+elseif LEN(cPom) == 1
+
+	// nivo entiteta
+    	// _IdOps:=space(3)
+    	_IdOps := IF( LEN(cPom2) == 3, cPom2, OpcRada() )
+    	aJPrih := JPrih( _IdJPrih, "", "", cPom )
+   	_kome_zr := aJPrih[1]
+   	//_kome_txt := aJPrih[2]
+   	_BudzORg := aJPrih[3]
+	
+elseif LEN(cPom) == 0
+    
+	// jedinstveni uplatni racun
+    	_IdOps := space(3)
+    	_IdJprih := padr(_idjprih, 6) 
+    	// duzina sifre javnog prihoda
+    	aJPrih := JPrih( _IdJPrih, "", "", cPom )
+   	_kome_zr := aJPrih[1]
+  	//_kome_txt := aJPrih[2]
+   	_BudzORg:=  aJPrih[3]
+endif
 return
-*}
 
 
 
 function fillJprih()
-*{
 // drugi krug; popuni polja vezana za javne prihode ....
 select vrprim; set order to tag "ID"
 select pripr
