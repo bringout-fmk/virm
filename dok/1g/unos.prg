@@ -301,7 +301,8 @@ if vrprim->Idpartner="JP" // javni prihod
        _IdJPrih := padr(_IdJPrih , 6)
     endif
   endif
-  @ m_x+13 ,  m_y+20 SAY replicate("-",56)
+  
+  @ m_x+13 , m_y+20 SAY replicate("-",56)
   @ m_x+14 , m_y+20 SAY "Broj por.obveznika" GET _bpo
   @ m_x+14 , col()+2 SAY "V.uplate " GET _VUpl
   @ m_x+15 , m_y+20 SAY "Vrsta prihoda     " GET _IdJPrih
@@ -310,17 +311,25 @@ if vrprim->Idpartner="JP" // javni prihod
   @ m_x+16 , m_y+60 SAY "Do:" GET _PDo
   @ m_x+17 , m_y+55 SAY "Budz.org" GET _BudzOrg
   @ m_x+18 , m_y+20 SAY "Poziv na broj:    " GET _PNaBr
+  
   read
+  
   ESC_RETURN 0
+  
 else
+  
   @ m_x+13 ,  m_y+20 SAY replicate("",56)
 
   _BPO := space(len(_BPO))
-  _IdOps := space(len(_IdOps)) ;_IdJPrih:=space(len(_IdJPrih))
-  _PNabr:= space(len(_PNaBr  ))
+  _IdOps := space(len(_IdOps)) 
+  _IdJPrih:=space(len(_IdJPrih))
+  _BudzOrg := SPACE(LEN(_BudzOrg))
+  _PNabr:= space(len(_PNaBr ))
   _IdOps:= space(len(_IdOps ))
-  _POd := ctod("") ; _PDo := ctod("")
+  _POd := ctod("") 
+  _PDo := ctod("")
   _VUPL=""
+  
 endif
 
 return 1
