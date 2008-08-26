@@ -2,6 +2,7 @@
 	#include "sc.ch"
 #endif
 
+
 #define D_VIRM_VERZIJA "02.05"
 #define D_VIRM_PERIOD '06.96-27.08.07'
 
