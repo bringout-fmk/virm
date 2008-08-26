@@ -1,11 +1,7 @@
-#include "\dev\fmk\virm\virm.ch"
+#include "virm.ch"
 
-/*! \fn TVirmModNew()
- *  \brief
- */
 
 function TVirmModNew()
-*{
 local oObj
 
 #ifdef CLIP
@@ -16,7 +12,6 @@ local oObj
 
 oObj:self:=oObj
 return oObj
-*}
 
 
 #ifdef CPP

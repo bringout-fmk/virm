@@ -1,4 +1,4 @@
-#include "\dev\fmk\virm\virm.ch"
+#include "virm.ch"
 
 /*! \defgroup ini Parametri rada programa - fmk.ini
  *  @{

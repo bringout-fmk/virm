@@ -1,4 +1,4 @@
-#include "\dev\fmk\virm\virm.ch"
+#include "virm.ch"
 
 
 function UnosUpl()
