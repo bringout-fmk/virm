@@ -1,7 +1,6 @@
 #include "virm.ch"
 
 function PrenosLD()
-*{
 // ovom procedurom cu uzeti iz pripreme zeljena konta i baciti ih u
 // virmane
 
@@ -17,7 +16,8 @@ O_LDVIRM
 O_PRIPR
 
 cKome_Txt:=""
-lOpresa:=.t. //( IzFMKINI("VIRM","Opresa","N",PRIVPATH) == "D" )
+lOpresa := .t. 
+//( IzFMKINI("VIRM","Opresa","N",PRIVPATH) == "D" )
 cPozBr:=""
 
 qqKonto:=padr("6;",60)
@@ -26,6 +26,7 @@ dDatVir:=date()
 private _godina:=val(IzFmkIni("LDVIRM","Godina",str(year(date()),4), KUMPATH))
 private _mjesec:=val(IzFmkIni("LDVIRM","Mjesec",str(mont(date()),2), KUMPATH))
 private cBezNula:="D"
+private cIsplPos:="N"
 
 cPNaBr:=IzFmkIni("LDVIRM","PozivNaBr"," ", KUMPATH)
 cPnabr:=padr(cPnabr,10)
@@ -53,7 +54,8 @@ Box(,10,70)
  @ m_x+7,m_y+2 SAY "Datum" GET dDatVir
  @ m_x+8,m_y+2 SAY "Porezni period od" GET dPOd
  @ m_x+8,col()+2 SAY "do" GET dPDo
- @ m_x+9,m_y+2 SAY "Formirati samo stavke sa iznosima vecim od 0 (D/N)?" GET cBezNula VALID cBezNula$"DN" PICT "@!"
+ @ m_x+9,m_y+2 SAY "Isplate prebaciti pojedinacno za svakog radnika (D/N)?" GET cIsplPos VALID cIsplPos$"DN" PICT "@!"
+ @ m_x+10,m_y+2 SAY "Formirati samo stavke sa iznosima vecim od 0 (D/N)?" GET cBezNula VALID cBezNula$"DN" PICT "@!"
  read; ESC_BCR
 BoxC()
 
@@ -251,94 +253,128 @@ enddo
 // odraditi isplate na tekuci racun
 select REKLD
 seek str(_godina,4)+str(_mjesec,2)+"IS_"
+
 do while !eof() .and. id="IS_"
 
-     cIdKred:=substr(id,4)  // sifra banke
+	cIdKred:=substr(id,4)  // sifra banke
 
-     select kred;   hseek padr(cidkred,len(kred->id))
-     // partija kreditora / banke
-     cOpresa1 := KRED->zirod
-     cOpresa2 := ""
-     select partn;  hseek padr(cidkred,len(partn->id))
-     if !found()  // dodaj kreditora u listu partnera
-         append blank
-         replace id with kred->id ,;
-                 naz with kred->naz ,;
-                 ziror with kred->ziro
+     	select kred
+     	hseek padr(cidkred,len(kred->id))
+     
+     	// partija kreditora / banke
+     	cOpresa1 := KRED->zirod
+     	cOpresa2 := ""
+     
+     	select partn
+     	hseek padr(cidkred,len(partn->id))
+     
+     	if !found()  
+     		// dodaj kreditora u listu partnera
+         	append blank
+         	replace id with kred->id ,;
+                	naz with kred->naz ,;
+                 	ziror with kred->ziro
+     	endif
+     
+     	select vrprim
+     	hseek PADR("IS",LEN(id))  
+     	// SPEC.SIFRA ZA ISPLATU NA TR
+     
+     	if !found()
+       		APPEND BLANK
+       		replace id with "IS",;
+               		naz with "ISPLATA NA TEKUCI RACUN",;
+               		pom_txt with "Plata",;
+               		NACIN_PL WITH "1",;
+               		DOBAV WITH "D"
+     	endif
 
-                 //dziror with kred->zirod
-     endif
-     select vrprim; hseek PADR("IS",LEN(id))  // SPEC.SIFRA ZA ISPLATU NA TR
-     if !found()
-       APPEND BLANK
-       replace id with "IS",;
-               naz with "ISPLATA NA TEKUCI RACUN",;
-               pom_txt with "Plata",;
-               NACIN_PL WITH "1",;
-               DOBAV WITH "D"
-     endif
+     	// VRPRIM->dobav=="D"
+     	cSvrha_pl:=id
+     	select partn
+     	seek CIDKRED
+     	cU_korist:=id
+     	cKome_txt:=naz
+     	cKome_sj:=mjesto
+     	cNacPl:="1"
 
-     // VRPRIM->dobav=="D"
-     cSvrha_pl:=id
-     select partn
-     seek CIDKRED
-     cU_korist:=id
-     cKome_txt:=naz
-     cKome_sj:=mjesto
-     cNacPl:="1"
+     	//cKome_zr:=ziror
+     	cKome_ZR:=space(16)
+     	OdBanku(cU_korist,@cKome_ZR, .f.)
 
-     //cKome_zr:=ziror
-     cKome_ZR:=space(16)
-     OdBanku(cU_korist,@cKome_ZR, .f.)
+     	select pripr
+     	go top   
+     	// uzmi podatke iz prve stavke
+     	cKo_Txt:=ko_txt
+     	cKo_ZR :=ko_zr
 
-     select pripr; go top   // uzmi podatke iz prve stavke
-     cKo_Txt:=ko_txt
-     cKo_ZR :=ko_zr
+     	select partn
+     	hseek  gFirma
 
-     select partn; hseek  gFirma
+     	nRekLDI1 := 0
+     	nKrOpresa := 0
+     
+	altd()
 
-     nRekLDI1:=0
-     nKrOpresa:=0
-     SELECT REKLD
-     cSKOpresa := idpartner // SK=sifra kreditora/banke
-     DO WHILE !EOF() .and. id="IS_" .and. IDPARTNER=cSKOpresa
-       ++nKrOpresa
-       cOpresa2:=rekld->opis2
-       nRekLDI1 += rekld->iznos1
-       SKIP 1
-     ENDDO
-     SKIP -1
-     select PRIPR
-     IF cBezNula=="N" .or. nRekLDI1>0
-       APPEND BLANK
-       replace rbr with ++nrbr, ;
-               mjesto with gmjesto,;
-               svrha_pl with "IS",;
-               iznos with nRekLDI1,;
-               na_teret  with gFirma,;
-               kome_txt with ckome_txt ,;
-               ko_txt   with cKo_txt,;
-               ko_zr    with cKo_zr,;
-               kome_sj  with ckome_sj,;
-               kome_zr with ckome_zr,;
-               dat_upl with dDatVir,;
-               svrha_doz with trim(VRPRIM->pom_txt)+" "+cDOpis,;
-               U_KORIST WITH cidkred  // SIFRA BANKE
+     	SELECT REKLD
+     	cSKOpresa := idpartner 
+	// SK=sifra kreditora/banke
+     
+     	// isplate za jednu banku - sumirati
+     	if cIsplPos == "N"
 
-        // popuniti podatke o partiji kredita
-        if lOpresa
-         if nKrOpresa>1 // vise radnika za jednog kreditora, zajednicka part.
-           if !empty(cOpresa1)
-              replace svrha_doz with trim(svrha_doz)
-           endif
-         else
-           // jedan radnik
-           replace svrha_doz with trim(svrha_doz) +", "+trim(cOpresa2)+", Tekuci rn:"+TRIM(REKLD->opis)
-         endif
-       endif        
-     ENDIF
-  SELECT REKLD
-  skip
+       		DO WHILE !EOF() .and. id="IS_" .and. IDPARTNER=cSKOpresa
+         		++nKrOpresa
+         		cOpresa2:=rekld->opis2
+         		nRekLDI1 += rekld->iznos1
+         		SKIP 1
+       		ENDDO
+       		SKIP -1
+     
+     	else
+     
+		// svaka isplata ce se tretirati posebno
+		nKrOpresa := 1
+		nRekLDI1 := rekld->iznos1
+		cOpresa2 := rekld->opis2
+
+     	endif
+
+     	select PRIPR
+
+     	IF cBezNula == "N" .or. nRekLDI1 > 0
+       		
+		APPEND BLANK
+       		replace rbr with ++nrbr, ;
+               		mjesto with gmjesto,;
+               		svrha_pl with "IS",;
+               		iznos with nRekLDI1,;
+               		na_teret  with gFirma,;
+               		kome_txt with ckome_txt ,;
+               		ko_txt   with cKo_txt,;
+               		ko_zr    with cKo_zr,;
+               		kome_sj  with ckome_sj,;
+               		kome_zr with ckome_zr,;
+               		dat_upl with dDatVir,;
+               		svrha_doz with trim(VRPRIM->pom_txt)+" "+cDOpis,;
+               		U_KORIST WITH cidkred  // SIFRA BANKE
+
+        		// popuniti podatke o partiji kredita
+
+         	if nKrOpresa > 1 
+			// vise radnika za jednog kreditora, zajednicka part.
+           		if !empty(cOpresa1)
+              			replace svrha_doz with trim(svrha_doz)
+           		endif
+         	else
+           		// jedan radnik
+           		replace svrha_doz with trim(svrha_doz) +", "+trim(cOpresa2)+", Tekuci rn:"+TRIM(REKLD->opis)
+         	endif
+     	ENDIF
+  	
+	SELECT REKLD
+  	skip
+
 enddo
 
 
