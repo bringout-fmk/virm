@@ -9,6 +9,8 @@ RPar("Pi",@gPici)
 Rpar("a4",@gA43)
 RPar("bn",@gINulu)
 Rpar("e3",@gNazad)
+Rpar("fi",@gFirma)
+Rpar("fn",@gNFirma)
 Rpar("fz",@gZaglav)
 Rpar("i'",@gnInca)
 Rpar("nt",@gNumT)
@@ -27,7 +29,9 @@ UsTipke()
 
  set cursor on
 
- aNiz:={ {"Lijeva margina pri stampanju (znakova)" , "gnLMarg", , "99", },;
+ aNiz:={ {"Firma", "gFirma", , , }, ;
+         {"Naziv firme", "gNFirma", , , }, ;
+ 	{"Lijeva margina pri stampanju (znakova)" , "gnLMarg", , "99", },;
          {"Pomak u kojim dijelovima incha "   , "gnInca", , "9999", },;
          {"Tip tabele  (0/1/2)"          , "gTabela", "gTabela>=0.and.gTabela<3", "9", },;
          {"Format papira za ispis  ( 3 - A3 , 4 - A4 )", "gA43", "gA43 $ '43'", "9", },;
@@ -67,6 +71,9 @@ if lastkey()<>K_ESC
   Wpar("ra",gnRazmak)
   WPar("tb",gTabela)
   WPar("du",gIDU)
+  Wpar("fi",gFirma)
+  WPar("fn",gNFirma)
+ 
   select params; use
 endif
 return

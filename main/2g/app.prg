@@ -190,6 +190,7 @@ public gTabela:=1          // fino crtanje tabele
 public gA43:="4"           // format papira
 public gZaglav:=SPACE(12)  // ime fajla zaglavlja
 public gDatum:=DATE(),gFirma:=SPACE(6),gMjesto:=SPACE(16),gOrgJed:=SPACE(17)
+public gNFirma := SPACE(20)
 public gnRazmak:=VAL("00.00"), gNumT:="D"
 public gKLpomak:=PADR("27\74",30)
 public gnInca:=216
@@ -224,6 +225,7 @@ RPar("dl",@gDirLD)
 RPar("dk",@gDirKALK)
 Rpar("e3",@gNazad)
 Rpar("fi",@gFirma)
+Rpar("fn",@gNFirma)
 Rpar("fz",@gZaglav)
 Rpar("i'",@gnInca)
 Rpar("mj",@gMjesto)

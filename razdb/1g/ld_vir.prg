@@ -95,8 +95,6 @@ DO WHILE !EOF()
 
      select PRIPR
 	
-     altd()
-
      nFormula := &cFormula  // npr. RLD("DOPR1XZE01")
 
      select PRIPR
