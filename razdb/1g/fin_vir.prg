@@ -103,9 +103,16 @@ do while !eof()
         endif
      endif
 
+     cTmp_doz := fpripr->brdok
+
+     if !EMPTY( cTmp_doz )
+     	cTmp_doz := "rn: " + cTmp_doz
+     endif
+
      // firma nalogdbodavac
      select partn
      hseek  gFirma
+
 
      select PRIPR
      APPEND BLANK
@@ -120,7 +127,8 @@ do while !eof()
              kome_sj  with "",;
              kome_zr with VRPRIM->racun,;
              dat_upl with dDatVir,;
-             svrha_doz with trim(VRPRIM->pom_txt)+" "+cDOpis
+             svrha_doz with trim(VRPRIM->pom_txt) + ;
+	     	" " + cTmp_doz + " " + cDOpis
 
 
            //  Ko_SJ  with partn->Mjesto,;
